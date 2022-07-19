@@ -12,11 +12,13 @@ jobs:
       - name: Train model
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pip3 install -r requirements.txt
-          python train.py
-
-          # Create CML report
-          cat metrics.txt >> report.md
-          cml publish plot.png --md --title 'Confusion Matrix' >> report.md
+          TB_CREDENTIALS: ${{ secrets.TB_CRED }}
+        run: |          
+          pip install -r requirements.txt 
+          cml tensorboard-dev \
+            --logdir logs \
+            --name "Go to tensorboard" \
+            --md >> report.md
           cml send-comment report.md
+ 
+          python train.py
